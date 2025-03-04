@@ -7,17 +7,5 @@
 </head>
 <body>
   <div id="root"></div>
-
-  <script>
-    fetch("/env.json")
-      .then(response => response.json())
-      .then(env => {
-        const kakaoApiKey = env.REACT_APP_KAKAO_MAP_API_KEY;
-        const script = document.createElement("script");
-        script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoApiKey}`;
-        script.async = true;
-        document.head.appendChild(script);
-      });
-  </script>
 </body>
 </html>
