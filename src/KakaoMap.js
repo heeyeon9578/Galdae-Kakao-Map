@@ -58,7 +58,7 @@ const KakaoMap = () => {
               map: map,
               title: "출발지",
               image: new window.kakao.maps.MarkerImage(
-                "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/blue_b.png", // ✅ 파란색 깃발
+                "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/red_b.png", // ✅ 빨간색 깃발
                 new window.kakao.maps.Size(36, 37),
                 { offset: new window.kakao.maps.Point(18, 37) }
               )
@@ -69,7 +69,7 @@ const KakaoMap = () => {
               map: map,
               title: "도착지",
               image: new window.kakao.maps.MarkerImage(
-                "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/red_b.png", // ✅ 빨간색 깃발
+                "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/blue_b.png", // ✅ 파란색 깃발
                 new window.kakao.maps.Size(36, 37),
                 { offset: new window.kakao.maps.Point(18, 37) }
               )
@@ -84,9 +84,9 @@ const KakaoMap = () => {
             // ✅ 경로 그리기
             const polyline = new window.kakao.maps.Polyline({
               path: polylinePath,
-              strokeWeight: 5,
-              strokeColor: "#FF0000",
-              strokeOpacity: 0.8,
+              strokeWeight: 3,
+              strokeColor: "#66D760",
+              strokeOpacity: 1,
               strokeStyle: "solid"
             });
             polyline.setMap(map);
@@ -97,8 +97,8 @@ const KakaoMap = () => {
             console.log(`📍 거리: ${distance}m, ⏳ 소요 시간: ${duration}초`);
 
             // ✅ HTML 요소 업데이트
-            document.getElementById("routeInfo").innerText = 
-              `📍 거리: ${(distance / 1000).toFixed(2)} km, ⏳ 예상 시간: ${(duration / 60).toFixed(0)} 분`;
+            // document.getElementById("routeInfo").innerText = 
+            //   `📍 거리: ${(distance / 1000).toFixed(2)} km, ⏳ 예상 시간: ${(duration / 60).toFixed(0)} 분`;
 
             // ✅ 중간 지점 (경로의 절반 지점) 찾기
             const middleIndex = Math.floor(polylinePath.length / 2);
@@ -150,7 +150,7 @@ const KakaoMap = () => {
   return (
     <div style={{ position: "relative", width: "100%", height: "100vh" }}>
       <div id="map" style={{ width: "100%", height: "100%" }}></div>
-      <div
+      {/* <div
         id="routeInfo"
         style={{
           position: "absolute",
@@ -162,8 +162,8 @@ const KakaoMap = () => {
           borderRadius: "5px",
           boxShadow: "0px 2px 5px rgba(0,0,0,0.2)"
         }}>
-        📍 경로 정보 로딩 중...
-      </div>
+        
+      </div> */}
     </div>
   );
 };
