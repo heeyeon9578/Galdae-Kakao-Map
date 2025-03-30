@@ -74,16 +74,33 @@ const KakaoMap = () => {
                 { offset: new window.kakao.maps.Point(18, 37) }
               )
             });
-
+            // 선형 보간 예시: 각 두 점 사이에 numSegments개의 중간 점 생성
+            function interpolatePoints(points, numSegments) {
+              const interpolated = [];
+              for (let i = 0; i < points.length - 1; i++) {
+                const start = points[i];
+                const end = points[i + 1];
+                interpolated.push(start); // 시작 점 추가
+                for (let t = 1; t < numSegments; t++) {
+                  const ratio = t / numSegments;
+                  const lat = start.getLat() + (end.getLat() - start.getLat()) * ratio;
+                  const lng = start.getLng() + (end.getLng() - start.getLng()) * ratio;
+                  interpolated.push(new window.kakao.maps.LatLng(lat, lng));
+                }
+              }
+              interpolated.push(points[points.length - 1]); // 마지막 점 추가
+              return interpolated;
+            }
             // ✅ 경로(Polyline) 좌표 변환 → `guides` 활용하여 자연스럽게 표시
             let polylinePath = [];
             sections.guides.forEach(guide => {
               polylinePath.push(new window.kakao.maps.LatLng(guide.y, guide.x));
             });
-
+            // 각 구간에 5개의 중간 점을 추가 (선형 보간)
+            const smoothPath = interpolatePoints(polylinePath, 5);
             // ✅ 경로 그리기
             const polyline = new window.kakao.maps.Polyline({
-              path: polylinePath,
+              path: smoothPath,
               strokeWeight: 3,
               strokeColor: "#66D760",
               strokeOpacity: 1,
@@ -96,12 +113,10 @@ const KakaoMap = () => {
             const duration = route.summary.duration; // 초 단위
             console.log(`📍 거리: ${distance}m, ⏳ 소요 시간: ${duration}초`);
 
-            // ✅ HTML 요소 업데이트
-            // document.getElementById("routeInfo").innerText = 
-            //   `📍 거리: ${(distance / 1000).toFixed(2)} km, ⏳ 예상 시간: ${(duration / 60).toFixed(0)} 분`;
+           
 
             // ✅ 중간 지점 (경로의 절반 지점) 찾기
-            const middleIndex = Math.floor(polylinePath.length / 2);
+            const middleIndex = Math.floor(polylinePath.length / 2 + polylinePath.length /9);
             const middlePoint = polylinePath[middleIndex];
 
             // ✅ CustomOverlay를 사용하여 예상 소요 시간 표시
@@ -126,7 +141,6 @@ const KakaoMap = () => {
           }
         } catch (error) {
           console.error("🚨 Kakao Directions API 호출 실패:", error);
-          document.getElementById("routeInfo").innerText = "❌ 경로를 불러올 수 없습니다.";
         }
       } else {
         console.error("🚨 Kakao Maps API 로드 실패");
@@ -150,20 +164,6 @@ const KakaoMap = () => {
   return (
     <div style={{ position: "relative", width: "100%", height: "100vh" }}>
       <div id="map" style={{ width: "100%", height: "100%" }}></div>
-      {/* <div
-        id="routeInfo"
-        style={{
-          position: "absolute",
-          top: "10px",
-          left: "10px",
-          background: "rgba(255, 255, 255, 0.9)",
-          padding: "10px",
-          fontSize: "14px",
-          borderRadius: "5px",
-          boxShadow: "0px 2px 5px rgba(0,0,0,0.2)"
-        }}>
-        
-      </div> */}
     </div>
   );
 };
