@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect,useState,useRef } from "react";
 
 const KakaoMap = () => {
   const isLoaded = useRef(false); // ✅ 중복 실행 방지
-
+  const [estimatedTime, setEstimatedTime] = useState(null);
   useEffect(() => {
     if (isLoaded.current) return;
     isLoaded.current = true;
@@ -115,24 +115,30 @@ const KakaoMap = () => {
 
            
 
-            // ✅ 중간 지점 (경로의 절반 지점) 찾기
-            const middleIndex = Math.floor(polylinePath.length / 2 + polylinePath.length /9);
-            const middlePoint = polylinePath[middleIndex];
+            // // ✅ 중간 지점 (경로의 절반 지점) 찾기
+            // const middleIndex = Math.floor(polylinePath.length / 2 + polylinePath.length /9);
+            // const middlePoint = polylinePath[middleIndex];
+            // console.log(`
 
+
+            //   middlePoint ${middlePoint}
+              
+            //   `,)
+            setEstimatedTime((duration / 60).toFixed(0));
             // ✅ CustomOverlay를 사용하여 예상 소요 시간 표시
-            const timeOverlay = new window.kakao.maps.CustomOverlay({
-              position: middlePoint,
-              content: `<div style="
-                background: #fff;
-                padding: 5px 10px;
-                border-radius: 5px;
-                font-size: 12px;
-                font-weight: bold;
-                box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
-              ">🚗 예상 소요 시간: ${(duration / 60).toFixed(0)}분</div>`,
-              yAnchor: 1.5
-            });
-            timeOverlay.setMap(map);
+            // const timeOverlay = new window.kakao.maps.CustomOverlay({
+            //   position: middlePoint,
+            //   content: `<div style="
+            //     background: #fff;
+            //     padding: 5px 10px;
+            //     border-radius: 5px;
+            //     font-size: 12px;
+            //     font-weight: bold;
+            //     box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
+            //   ">🚗 예상 소요 시간: ${(duration / 60).toFixed(0)}분</div>`,
+            //   yAnchor: 1.5
+            // });
+            // timeOverlay.setMap(map);
 
             // ✅ 지도 중심을 경로 전체가 보이도록 설정
             const bounds = new window.kakao.maps.LatLngBounds();
@@ -163,7 +169,23 @@ const KakaoMap = () => {
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100vh" }}>
-      <div id="map" style={{ width: "100%", height: "100%" }}></div>
+      <div id="map" style={{ width: "100%", height: "100%" }}>
+        {/* 왼쪽 상단 고정 패널 */}
+      <div style={{
+        position: "absolute",
+        top: "10px",
+        left: "10px",
+        background: "#fff",
+        padding: "5px 10px",
+        borderRadius: "5px",
+        fontSize: "12px",
+        fontWeight: "bold",
+        boxShadow: "0px 2px 5px rgba(0,0,0,0.2)",
+        zIndex: 100
+      }}>
+        🚗 예상 소요 시간: {estimatedTime ? estimatedTime : "불러오는 중..."}분
+      </div>
+      </div>
     </div>
   );
 };
