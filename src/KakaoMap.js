@@ -201,7 +201,7 @@ const KakaoMap = () => {
         zIndex: 100
       }}>
         <div>🚗 예상 소요 시간: {estimatedTime ? estimatedTime : "불러오는 중..."}분</div>
-        {estimatedTime && (
+        {/* {estimatedTime && (
           <button 
             onClick={() => {
               const messageData = {
@@ -240,7 +240,7 @@ const KakaoMap = () => {
           >
             📱 앱으로 전송
           </button>
-        )}
+        )} */}
       </div>
       </div>
     </div>
