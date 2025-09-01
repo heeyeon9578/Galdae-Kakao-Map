@@ -124,7 +124,24 @@ const KakaoMap = () => {
             //   middlePoint ${middlePoint}
               
             //   `,)
-            setEstimatedTime((duration / 60).toFixed(0));
+            const estimatedTimeMinutes = (duration / 60).toFixed(0);
+            setEstimatedTime(estimatedTimeMinutes);
+            
+            // ✅ 웹뷰에서 네이티브 앱으로 예상 소요 시간 전달
+            const messageData = {
+              type: 'estimatedTime',
+              estimatedTime: estimatedTimeMinutes,
+              distance: distance,
+              duration: duration
+            };
+            
+           
+            
+            // React Native WebView
+            if (window.ReactNativeWebView) {
+              window.ReactNativeWebView.postMessage(JSON.stringify(messageData));
+            }
+            
             // ✅ CustomOverlay를 사용하여 예상 소요 시간 표시
             // const timeOverlay = new window.kakao.maps.CustomOverlay({
             //   position: middlePoint,
@@ -176,14 +193,54 @@ const KakaoMap = () => {
         top: "10px",
         left: "10px",
         background: "#fff",
-        padding: "5px 10px",
+        padding: "10px",
         borderRadius: "5px",
         fontSize: "12px",
         fontWeight: "bold",
         boxShadow: "0px 2px 5px rgba(0,0,0,0.2)",
         zIndex: 100
       }}>
-        🚗 예상 소요 시간: {estimatedTime ? estimatedTime : "불러오는 중..."}분
+        <div>🚗 예상 소요 시간: {estimatedTime ? estimatedTime : "불러오는 중..."}분</div>
+        {estimatedTime && (
+          <button 
+            onClick={() => {
+              const messageData = {
+                type: 'estimatedTime',
+                estimatedTime: estimatedTime,
+                timestamp: new Date().toISOString()
+              };
+              
+              // Android WebView
+              if (window.Android && window.Android.onEstimatedTimeReceived) {
+                window.Android.onEstimatedTimeReceived(JSON.stringify(messageData));
+              }
+              
+              // iOS WebView
+              if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.estimatedTimeHandler) {
+                window.webkit.messageHandlers.estimatedTimeHandler.postMessage(messageData);
+              }
+              
+              // React Native WebView
+              if (window.ReactNativeWebView) {
+                window.ReactNativeWebView.postMessage(JSON.stringify(messageData));
+              }
+              
+              console.log('📱 앱으로 데이터 전송 완료:', messageData);
+            }}
+            style={{
+              marginTop: "5px",
+              padding: "5px 10px",
+              background: "#007AFF",
+              color: "white",
+              border: "none",
+              borderRadius: "3px",
+              fontSize: "10px",
+              cursor: "pointer"
+            }}
+          >
+            📱 앱으로 전송
+          </button>
+        )}
       </div>
       </div>
     </div>
